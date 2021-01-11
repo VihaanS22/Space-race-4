@@ -2,7 +2,7 @@ var VI, HA, AN
 var Vi, Ha, An
 var stone, stone2, stoneImg
 var create, createImg
-var space, tell, tellImg, space2, space3
+var space, tell, tellImg, space2, space3, space4, space5
 var story, storyImg
 var portal, portalImg
 var astro, astroImg
@@ -13,6 +13,9 @@ var back, backImg
 var themeSound
 var shipSound
 var start, startButton
+var asteroids
+var collect, collect2, collectImg, collect2Img
+var congrats, congratsImg
 var playerScore = 0
 var player2Score = 0
 
@@ -27,6 +30,8 @@ createImg = loadImage("create.png")
 space = loadImage("space.png")
 space2 = loadImage("space2.png")
 space3 = loadImage("space3.png")
+space4 = loadImage("space4.png")
+space5 = loadImage("space5.png")
 tellImg = loadImage("tell.png")
 storyImg = loadImage("play.png")
 portalImg = loadImage("portal2.png")
@@ -39,6 +44,9 @@ instructImg = loadImage("instruct.png")
 instruct1Img = loadImage("instruct1.png")
 backImg = loadImage("back.png")
 start = loadImage("start.png")
+collectImg = loadImage("collect.png")
+collect2Img = loadImage("collect2.png")
+congratsImg = loadImage("congrats.png")
 }
 
 function setup(){
@@ -84,23 +92,28 @@ astro.scale = 0.5
 
 button = createSprite(650, 400, 20, 20)
 button.addAnimation("play", buttonImg)
-
+button.visible = false
 
 goal = createSprite(400, -200, 20,20)
 goal.addAnimation("goal", goalImg)
 
 race = createSprite(650, 200, 10, 10)
 race.addAnimation("poster", raceImg)
+race.visible = false
 
 instruct = createSprite(650, 510, 20, 20)
 instruct.addAnimation("instructions", instructImg)
 instruct.scale = 0.5
+instruct.visible = false
+
 ship = createSprite(50, 100, 10, 10)
 ship.addAnimation("spaceship", shipImg)
 ship.visible = false
+ship.scale = 0.7
 ship2 = createSprite(50, 500, 10, 10)
 ship2.addAnimation("spaceship", shipImg)
 ship2.visible = false
+ship.scale = 0.7
 
 instruct1 = createSprite(650, 200, 20, 20)
 instruct1.addAnimation("instructions2", instruct1Img)
@@ -113,6 +126,22 @@ back.scale = 0.2
 
 startButton = createSprite(350, 500, 10, 10)
 startButton.addAnimation("click", start)
+
+collect = createSprite(650, 500, 10, 10)
+collect.addAnimation("h2", collectImg)
+collect.visible = false
+collect2 = createSprite(650, 500, 10, 10)
+collect2.addAnimation("soil", collect2Img)
+collect2.visible = false
+
+congrats = createSprite(650, 500, 10, 10)
+congrats.addAnimation("congratulations", congratsImg)
+congrats.visible = false
+
+asteroids = new Group()
+asteroids2 = new Group()
+asteroids3 = new Group()
+asteroids4 = new Group()
 }
 
 function draw(){
@@ -189,7 +218,7 @@ text("YOU HELP YOUR FRIENDS UP AND SEE YOURSELF IN SPACE SUITS!AND THERE ARE SPA
 if(create.x>displayWidth+50){
  textSize(25)
     text("MARS, 2070...EARTH IS NO MORE A PLACE FOR LIVING. IT'S BECOME A PLACE ONLY FOR RESEARCH.", 10, 100)
-
+text("YOU ARE AT THE MARS GAMING CENTRE WITH YOUR FRIENDS. SUDDENLY....", 20, 130)
 }
 if(astro.x>1400){
     goal.velocityY = 5
@@ -209,15 +238,22 @@ if(mousePressedOver(startButton)){
 
 
 if(goal.y>1350){
+ 
     background(space3)
- race.display()
+    AsteroidGroup()
+    Asteroid2Group()
+    Asteroid3Group()
+    Asteroid4Group()
+    race.visible = true
 ship.display()
 ship2.display()
-button.display()
-instruct.display()
+button.visible = true
+instruct.visible = true
 instruct1.display()
 back.display()
+
 //timer.display()
+
 }
     
  
@@ -240,12 +276,14 @@ if(mousePressedOver(back)){
 }
     
 if(mousePressedOver(button)){
-  
-    race.visible = false
+  themeSound.stop()
+    race.destroy()
     ship.visible = true
     ship2.visible = true
-    button.visible = false
-    instruct.visible = false
+    button.destroy()
+    instruct.destroy()
+    instruct1.destroy()
+    back.destroy()
    // themeSound.play()
    // timer.visible = true
  // timer.velocityY = 0.8
@@ -253,13 +291,13 @@ if(mousePressedOver(button)){
     }
 
    
-
     if(keyDown("left")){
-        ship.x = ship.x - 5
-      
+        ship.x = ship.x - 6
+    //  shipSound.play()
     }
         if(keyDown("right")){
-            ship.x = ship.x+5
+            ship.x = ship.x+6
+      //      shipSound.play()
         }
         if(keyDown("a")){
             ship2.x = ship2.x - 5
@@ -273,8 +311,25 @@ ship.x = 50
 playerScore = playerScore + 1
 }
 if(playerScore>=2){
-background("blue")
-score = 0
+background(space)
+collect.visible = true
+}
+if(playerScore>=5){
+   background(space4)
+    collect.visible = false
+    collect2.visible = true
+}
+if(playerScore>=8){
+background(space5)
+collect2.visible = false
+congrats.visible = true
+asteroids.destroyEach()
+asteroids2.destroyEach()
+asteroids3.destroyEach()
+asteroids4.destroyEach()
+ship.destroy()
+ship2.destroy()
+
 }
 
 if(ship2.x>1400){
@@ -283,11 +338,27 @@ player2Score = player2Score + 1
 }
 if(player2Score>=2){
     background("red")
-score = 0
+
 }
+
+if(asteroids.isTouching(ship)){
+ship.x = 50
+}
+if(asteroids2.isTouching(ship)){
+    ship.x = 50
+    }
+
+    if(asteroids3.isTouching(ship)){
+        ship.x = 50
+        }
+
+        if(asteroids4.isTouching(ship)){
+            ship.x = 50
+            }
+
 astro.display()
 
-
+drawSprites()
 fill("white");
 text(playerScore, 1300, 180);
  fill("white");
@@ -297,5 +368,82 @@ text(playerScore, 1300, 180);
 
 }
 
+function AsteroidGroup(){
+ 
+    if (frameCount % 120 === 0) {
+      var asteroid = createSprite(420,820,40,10);
+      asteroid.y = random(270,820);
 
+      asteroid.addImage(stoneImg);
+ asteroid.scale = 0.2
+     
+      asteroid.velocityY = -6
+     
+  //  car.depth = man.depth;
+  //    man.depth = car.depth + 1;
+  
+     asteroid.setLifetime = 400;
+    asteroids.add(asteroid);
+      
+    }
+  }
 
+  function Asteroid2Group(){
+ 
+    if (frameCount % 90 === 0) {
+      var asteroid2 = createSprite(650,820,40,10);
+      asteroid2.y = random(310,820);
+
+      asteroid2.addImage(stoneImg);
+ asteroid2.scale = 0.2
+     
+      asteroid2.velocityY = -6
+     
+  //  car.depth = man.depth;
+  //    man.depth = car.depth + 1;
+  
+     asteroid2.setLifetime = 400;
+    asteroids2.add(asteroid2);
+      
+    }
+  }
+
+  function Asteroid3Group(){
+ 
+    if (frameCount % 70 === 0) {
+      var asteroid3 = createSprite(880,820,40,10);
+      asteroid3.y = random(290,820);
+
+      asteroid3.addImage(stoneImg);
+ asteroid3.scale = 0.2
+     
+      asteroid3.velocityY = -6
+     
+  //  car.depth = man.depth;
+  //    man.depth = car.depth + 1;
+  
+ asteroid3.setLifetime = 400;
+    asteroids3.add(asteroid3);
+      
+    }
+  }
+
+  function Asteroid4Group(){
+ 
+    if (frameCount % 70 === 0) {
+      var asteroid4 = createSprite(1110,820,40,10);
+      asteroid4.y = random(270,820);
+
+      asteroid4.addImage(stoneImg);
+ asteroid4.scale = 0.2
+     
+      asteroid4.velocityY = -6
+     
+  //  car.depth = man.depth;
+  //    man.depth = car.depth + 1;
+  
+ asteroid4.setLifetime = 400;
+    asteroids4.add(asteroid4);
+      
+    }
+  }
