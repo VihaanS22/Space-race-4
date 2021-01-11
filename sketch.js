@@ -16,6 +16,7 @@ var start, startButton
 var asteroids
 var collect, collect2, collectImg, collect2Img
 var congrats, congratsImg
+var cover1, cover2, cover3, coverImg, cover2Img, cover3Img
 var playerScore = 0
 var player2Score = 0
 
@@ -43,10 +44,13 @@ shipImg = loadImage("ship.png")
 instructImg = loadImage("instruct.png")
 instruct1Img = loadImage("instruct1.png")
 backImg = loadImage("back.png")
-start = loadImage("start.png")
+start = loadImage("sound.png")
 collectImg = loadImage("collect.png")
 collect2Img = loadImage("collect2.png")
 congratsImg = loadImage("congrats.png")
+coverImg = loadImage("cover.png")
+cover2Img  = loadImage("cover2.png")
+cover3Img = loadImage("cover3.png")
 }
 
 function setup(){
@@ -55,6 +59,11 @@ createCanvas(displayWidth, displayHeight-200)
 
 
 fill("white")
+cover1 = createSprite(1300, 180, 10, 10)
+cover1.addAnimation("covering", coverImg)
+cover1.addAnimation("covering2", cover2Img)
+cover1.addAnimation("covering3", cover3Img)
+
 VI = createSprite(displayWidth/2-200, -20, 50, 50)
 VI.addAnimation("Vi", Vi)
 VI.velocityY = 4
@@ -106,15 +115,19 @@ instruct.addAnimation("instructions", instructImg)
 instruct.scale = 0.5
 instruct.visible = false
 
-ship = createSprite(50, 100, 10, 10)
+ship = createSprite(50, 300, 10, 10)
 ship.addAnimation("spaceship", shipImg)
 ship.visible = false
 ship.scale = 0.7
-ship2 = createSprite(50, 500, 10, 10)
+
+/*ship2 = createSprite(-3050, 500, 10, 10)
 ship2.addAnimation("spaceship", shipImg)
 ship2.visible = false
-ship.scale = 0.7
-
+ship2.scale = 0.7
+ship2.velocityX = 0
+ship2.setCollider("circle", 0, 0, 50)
+ship2.debug = true
+*/
 instruct1 = createSprite(650, 200, 20, 20)
 instruct1.addAnimation("instructions2", instruct1Img)
 instruct1.visible = false
@@ -124,7 +137,7 @@ back.addAnimation("go back", backImg)
 back.visible = false
 back.scale = 0.2
 
-startButton = createSprite(350, 500, 10, 10)
+startButton = createSprite(50, 500, 10, 10)
 startButton.addAnimation("click", start)
 
 collect = createSprite(650, 500, 10, 10)
@@ -137,6 +150,8 @@ collect2.visible = false
 congrats = createSprite(650, 500, 10, 10)
 congrats.addAnimation("congratulations", congratsImg)
 congrats.visible = false
+
+
 
 asteroids = new Group()
 asteroids2 = new Group()
@@ -202,6 +217,7 @@ if(portal.isTouching(story)){
     story.visible = false
 }
 if(portal.y<= -10){
+    cover1.changeAnimation("covering2", cover2Img)
 background(space2)
 goal.display()
 astro.velocityX = 6
@@ -234,19 +250,21 @@ if(astro.x>1400){
 if(mousePressedOver(startButton)){
     themeSound.play()
     startButton.destroy()
+
     }
 
 
 if(goal.y>1350){
  
     background(space3)
+    cover1.changeAnimation("covering3", cover3Img)
     AsteroidGroup()
     Asteroid2Group()
     Asteroid3Group()
     Asteroid4Group()
     race.visible = true
 ship.display()
-ship2.display()
+//ship2.display()
 button.visible = true
 instruct.visible = true
 instruct1.display()
@@ -272,23 +290,28 @@ if(mousePressedOver(back)){
     instruct.visible = true
     race.visible = true
     button.visible = true
+
     
 }
     
 if(mousePressedOver(button)){
-  themeSound.stop()
+ 
+    themeSound.stop()
     race.destroy()
+    startButton.destroy()
     ship.visible = true
-    ship2.visible = true
+  //  ship2.visible = true
     button.destroy()
     instruct.destroy()
     instruct1.destroy()
     back.destroy()
+cover1.visible = false
    // themeSound.play()
    // timer.visible = true
  // timer.velocityY = 0.8
  
     }
+
 
    
     if(keyDown("left")){
@@ -299,12 +322,7 @@ if(mousePressedOver(button)){
             ship.x = ship.x+6
       //      shipSound.play()
         }
-        if(keyDown("a")){
-            ship2.x = ship2.x - 5
-            }
-            if(keyDown("d")){
-                ship2.x = ship2.x+5
-            }
+      
 
 if(ship.x>1400 ){
 ship.x = 50
@@ -328,11 +346,11 @@ asteroids2.destroyEach()
 asteroids3.destroyEach()
 asteroids4.destroyEach()
 ship.destroy()
-ship2.destroy()
+
 
 }
 
-if(ship2.x>1400){
+/*if(ship2.x>1400){
 ship2.x = 50
 player2Score = player2Score + 1
 }
@@ -340,6 +358,7 @@ if(player2Score>=2){
     background("red")
 
 }
+*/
 
 if(asteroids.isTouching(ship)){
 ship.x = 50
@@ -356,13 +375,26 @@ if(asteroids2.isTouching(ship)){
             ship.x = 50
             }
 
+ /*           if(asteroids.isTouching(ship2) || asteroids2.isTouching(ship2) ||asteroids3.isTouching(ship2) || asteroids4.isTouching(ship2)){
+ship2.x = ship2.x-8
+ship2.velocityX= 0
+}
+else{
+    ship2.velocityX = 3
+}
+   */
+      
 astro.display()
+textSize(25)
+fill("white");
+
+text(playerScore, 1300, 250);
+ 
 
 drawSprites()
-fill("white");
-text(playerScore, 1300, 180);
- fill("white");
-  text(player2Score, 1300, 260);
+
+  
+    
 
 
 
